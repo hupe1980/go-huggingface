@@ -25,6 +25,7 @@ type InferenceClientOptions struct {
 	Model             string
 	Endpoint          string
 	InferenceEndpoint string
+	HTTPClient        HTTPClient
 }
 
 // InferenceClient is a client for performing inference using Hugging Face models.
@@ -45,8 +46,12 @@ func NewInferenceClient(token string, optFns ...func(o *InferenceClientOptions))
 		fn(&opts)
 	}
 
+	if opts.HTTPClient == nil {
+		opts.HTTPClient = http.DefaultClient
+	}
+
 	return &InferenceClient{
-		httpClient: http.DefaultClient,
+		httpClient: opts.HTTPClient,
 		token:      token,
 		opts:       opts,
 	}
