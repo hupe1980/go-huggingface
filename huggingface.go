@@ -170,6 +170,27 @@ func (ic *InferenceClient) QuestionAnswering(ctx context.Context, req *QuestionA
 	return questionAnsweringResponse, nil
 }
 
+// FillMask performs masked language modeling using the specified model.
+// It sends a POST request to the Hugging Face inference endpoint with the provided inputs.
+// The response contains the generated text with the masked tokens filled or an error if the request fails.
+func (ic *InferenceClient) FillMask(ctx context.Context, req *FillMaskRequest) (FillMaskResponse, error) {
+	if len(req.Inputs) == 0 {
+		return nil, errors.New("inputs are required")
+	}
+
+	body, err := ic.post(ctx, req.Model, "fill-mask", req)
+	if err != nil {
+		return nil, err
+	}
+
+	fillMaskResponse := FillMaskResponse{}
+	if err := json.Unmarshal(body, &fillMaskResponse); err != nil {
+		return nil, err
+	}
+
+	return fillMaskResponse, nil
+}
+
 // post sends a POST request to the specified model and task with the provided payload.
 // It returns the response body or an error if the request fails.
 func (ic *InferenceClient) post(ctx context.Context, model, task string, payload any) ([]byte, error) {
