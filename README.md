@@ -3,7 +3,7 @@
 
 ## Installation
 ```
-go get github.com/hupe1980/golc
+go get github.com/hupe1980/go-huggingface
 ```
 
 ## How to use
