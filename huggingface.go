@@ -118,9 +118,13 @@ func (ic *InferenceClient) Text2TextGeneration(ctx context.Context, req *Text2Te
 // ZeroShotClassification performs zero-shot classification using the specified model.
 // It sends a POST request to the Hugging Face inference endpoint with the provided inputs.
 // The response contains the classification results or an error if the request fails.
-func (ic *InferenceClient) ZeroShotClassification(ctx context.Context, req *ZeroShotRequest) (ZeroShotResponse, error) {
+func (ic *InferenceClient) ZeroShotClassification(ctx context.Context, req *ZeroShotClassificationRequest) (ZeroShotClassificationResponse, error) {
 	if len(req.Inputs) == 0 {
 		return nil, errors.New("inputs are required")
+	}
+
+	if len(req.Parameters.CandidateLabels) == 0 {
+		return nil, errors.New("canidateLabels are required")
 	}
 
 	body, err := ic.post(ctx, req.Model, "zero-shot-classification", req)
@@ -128,12 +132,37 @@ func (ic *InferenceClient) ZeroShotClassification(ctx context.Context, req *Zero
 		return nil, err
 	}
 
-	zeroShotResponse := ZeroShotResponse{}
-	if err := json.Unmarshal(body, &zeroShotResponse); err != nil {
+	zeroShotClassificationResponse := ZeroShotClassificationResponse{}
+	if err := json.Unmarshal(body, &zeroShotClassificationResponse); err != nil {
 		return nil, err
 	}
 
-	return zeroShotResponse, nil
+	return zeroShotClassificationResponse, nil
+}
+
+// QuestionAnswering performs question answering using the specified model.
+// It sends a POST request to the Hugging Face inference endpoint with the provided question and context inputs.
+// The response contains the answer or an error if the request fails.
+func (ic *InferenceClient) QuestionAnswering(ctx context.Context, req *QuestionAnsweringRequest) (QuestionAnsweringResponse, error) {
+	if req.Inputs.Question == "" {
+		return nil, errors.New("question is required")
+	}
+
+	if req.Inputs.Context == "" {
+		return nil, errors.New("context is required")
+	}
+
+	body, err := ic.post(ctx, req.Model, "question-answering", req)
+	if err != nil {
+		return nil, err
+	}
+
+	questionAnsweringResponse := QuestionAnsweringResponse{}
+	if err := json.Unmarshal(body, &questionAnsweringResponse); err != nil {
+		return nil, err
+	}
+
+	return questionAnsweringResponse, nil
 }
 
 // post sends a POST request to the specified model and task with the provided payload.
@@ -174,7 +203,12 @@ func (ic *InferenceClient) post(ctx context.Context, model, task string, payload
 	}
 
 	if res.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("huggingfaces error: %s", resBody)
+		errResp := ErrorResponse{}
+		if err := json.Unmarshal(resBody, &errResp); err != nil {
+			return nil, fmt.Errorf("huggingfaces error: %s", resBody)
+		}
+
+		return nil, fmt.Errorf("huggingfaces error: %s", errResp.Error)
 	}
 
 	return resBody, nil

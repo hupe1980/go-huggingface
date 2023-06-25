@@ -12,9 +12,9 @@ import (
 func main() {
 	ic := huggingface.NewInferenceClient(os.Getenv("HUGGINGFACEHUB_API_TOKEN"))
 
-	res, err := ic.ZeroShotClassification(context.Background(), &huggingface.ZeroShotRequest{
+	res, err := ic.ZeroShotClassification(context.Background(), &huggingface.ZeroShotClassificationRequest{
 		Inputs: []string{"Hi, I recently bought a device from your company but it is not working as advertised and I would like to get reimbursed!"},
-		Parameters: huggingface.ZeroShotParameters{
+		Parameters: huggingface.ZeroShotClassificationParameters{
 			CandidateLabels: []string{"refund", "faq", "legal"},
 		},
 	})
