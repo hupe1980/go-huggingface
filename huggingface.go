@@ -35,10 +35,14 @@ type InferenceClient struct {
 }
 
 // NewInferenceClient creates a new InferenceClient instance with the specified token.
-func NewInferenceClient(token string) *InferenceClient {
+func NewInferenceClient(token string, optFns ...func(o *InferenceClientOptions)) *InferenceClient {
 	opts := InferenceClientOptions{
 		Endpoint:          "https://huggingface.co",
 		InferenceEndpoint: "https://api-inference.huggingface.co",
+	}
+
+	for _, fn := range optFns {
+		fn(&opts)
 	}
 
 	return &InferenceClient{
