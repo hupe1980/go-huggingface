@@ -17,7 +17,7 @@ type QuestionAnsweringRequest struct {
 }
 
 // Response structure for question answering model
-type QuestionAnsweringResponse []struct {
+type QuestionAnsweringResponse struct {
 	// A string that’s the answer within the Context text.
 	Answer string `json:"answer,omitempty"`
 

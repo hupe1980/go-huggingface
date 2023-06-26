@@ -149,7 +149,7 @@ func (ic *InferenceClient) ZeroShotClassification(ctx context.Context, req *Zero
 // QuestionAnswering performs question answering using the specified model.
 // It sends a POST request to the Hugging Face inference endpoint with the provided question and context inputs.
 // The response contains the answer or an error if the request fails.
-func (ic *InferenceClient) QuestionAnswering(ctx context.Context, req *QuestionAnsweringRequest) (QuestionAnsweringResponse, error) {
+func (ic *InferenceClient) QuestionAnswering(ctx context.Context, req *QuestionAnsweringRequest) (*QuestionAnsweringResponse, error) {
 	if req.Inputs.Question == "" {
 		return nil, errors.New("question is required")
 	}
@@ -168,7 +168,7 @@ func (ic *InferenceClient) QuestionAnswering(ctx context.Context, req *QuestionA
 		return nil, err
 	}
 
-	return questionAnsweringResponse, nil
+	return &questionAnsweringResponse, nil
 }
 
 // TableQuestionAnswering performs table-based question answering using the specified model.

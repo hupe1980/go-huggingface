@@ -22,5 +22,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println(res[0].Answer)
+	fmt.Println("Answer:", res.Answer)
+	fmt.Println("Score:", res.Score)
+	fmt.Println("Start:", res.Start)
+	fmt.Println("End:", res.End)
 }
