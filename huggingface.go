@@ -12,6 +12,7 @@ import (
 )
 
 var (
+	// recommendedModels stores the recommended models for each task.
 	recommendedModels map[string]string
 )
 
@@ -168,6 +169,31 @@ func (ic *InferenceClient) QuestionAnswering(ctx context.Context, req *QuestionA
 	}
 
 	return questionAnsweringResponse, nil
+}
+
+// TableQuestionAnswering performs table-based question answering using the specified model.
+// It sends a POST request to the Hugging Face inference endpoint with the provided inputs.
+// The response contains the answer or an error if the request fails.
+func (ic *InferenceClient) TableQuestionAnswering(ctx context.Context, req *TableQuestionAnsweringRequest) (*TableQuestionAnsweringResponse, error) {
+	if req.Inputs.Query == "" {
+		return nil, errors.New("query is required")
+	}
+
+	if req.Inputs.Table == nil {
+		return nil, errors.New("table is required")
+	}
+
+	body, err := ic.post(ctx, req.Model, "table-question-answering", req)
+	if err != nil {
+		return nil, err
+	}
+
+	tablequestionAnsweringResponse := TableQuestionAnsweringResponse{}
+	if err := json.Unmarshal(body, &tablequestionAnsweringResponse); err != nil {
+		return nil, err
+	}
+
+	return &tablequestionAnsweringResponse, nil
 }
 
 // FillMask performs masked language modeling using the specified model.
