@@ -1,5 +1,11 @@
 package gohuggingface
 
+import (
+	"context"
+	"encoding/json"
+	"errors"
+)
+
 type ZeroShotClassificationParameters struct {
 	// (Required) A list of strings that are potential classes for inputs. Max 10 candidate_labels,
 	// for more, simply run multiple requests, results are going to be misleading if using
@@ -30,4 +36,29 @@ type ZeroShotClassificationResponse []struct {
 
 	// a list of floats that correspond the the probability of label, in the same order as labels.
 	Scores []float64 `json:"scores,omitempty"`
+}
+
+// ZeroShotClassification performs zero-shot classification using the specified model.
+// It sends a POST request to the Hugging Face inference endpoint with the provided inputs.
+// The response contains the classification results or an error if the request fails.
+func (ic *InferenceClient) ZeroShotClassification(ctx context.Context, req *ZeroShotClassificationRequest) (ZeroShotClassificationResponse, error) {
+	if len(req.Inputs) == 0 {
+		return nil, errors.New("inputs are required")
+	}
+
+	if len(req.Parameters.CandidateLabels) == 0 {
+		return nil, errors.New("canidateLabels are required")
+	}
+
+	body, err := ic.post(ctx, req.Model, "zero-shot-classification", req)
+	if err != nil {
+		return nil, err
+	}
+
+	zeroShotClassificationResponse := ZeroShotClassificationResponse{}
+	if err := json.Unmarshal(body, &zeroShotClassificationResponse); err != nil {
+		return nil, err
+	}
+
+	return zeroShotClassificationResponse, nil
 }

@@ -1,5 +1,11 @@
 package gohuggingface
 
+import (
+	"context"
+	"encoding/json"
+	"errors"
+)
+
 type SummarizationParameters struct {
 	// (Default: None). Integer to define the minimum length in tokens of the output summary.
 	MinLength *int `json:"min_length,omitempty"`
@@ -40,4 +46,25 @@ type SummarizationRequest struct {
 type SummarizationResponse []struct {
 	// The summarized input string
 	SummaryText string `json:"summary_text,omitempty"`
+}
+
+// Summarization performs text summarization using the specified model.
+// It sends a POST request to the Hugging Face inference endpoint with the provided inputs.
+// The response contains the generated summary or an error if the request fails.
+func (ic *InferenceClient) Summarization(ctx context.Context, req *SummarizationRequest) (SummarizationResponse, error) {
+	if len(req.Inputs) == 0 {
+		return nil, errors.New("inputs are required")
+	}
+
+	body, err := ic.post(ctx, req.Model, "summarization", req)
+	if err != nil {
+		return nil, err
+	}
+
+	summarizationResponse := SummarizationResponse{}
+	if err := json.Unmarshal(body, &summarizationResponse); err != nil {
+		return nil, err
+	}
+
+	return summarizationResponse, nil
 }

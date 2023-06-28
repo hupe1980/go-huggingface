@@ -1,5 +1,11 @@
 package gohuggingface
 
+import (
+	"context"
+	"encoding/json"
+	"errors"
+)
+
 type TextGenerationParameters struct {
 	// (Default: None). Integer to define the top tokens considered within the sample operation to create new text.
 	TopK *int `json:"top_k,omitempty"`
@@ -47,4 +53,25 @@ type TextGenerationRequest struct {
 // NumReturnSequences in the request.
 type TextGenerationResponse []struct {
 	GeneratedText string `json:"generated_text,omitempty"`
+}
+
+// TextGeneration performs text generation using the specified model.
+// It sends a POST request to the Hugging Face inference endpoint with the provided inputs.
+// The response contains the generated text or an error if the request fails.
+func (ic *InferenceClient) TextGeneration(ctx context.Context, req *TextGenerationRequest) (TextGenerationResponse, error) {
+	if req.Inputs == "" {
+		return nil, errors.New("inputs are required")
+	}
+
+	body, err := ic.post(ctx, req.Model, "text-generation", req)
+	if err != nil {
+		return nil, err
+	}
+
+	textGenerationResponse := TextGenerationResponse{}
+	if err := json.Unmarshal(body, &textGenerationResponse); err != nil {
+		return nil, err
+	}
+
+	return textGenerationResponse, nil
 }
