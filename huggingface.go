@@ -57,6 +57,10 @@ func NewInferenceClient(token string, optFns ...func(o *InferenceClientOptions))
 	}
 }
 
+func (ic *InferenceClient) SetModel(model string) {
+	ic.opts.Model = model
+}
+
 // post sends a POST request to the specified model and task with the provided payload.
 // It returns the response body or an error if the request fails.
 func (ic *InferenceClient) post(ctx context.Context, model, task string, payload any) ([]byte, error) {
