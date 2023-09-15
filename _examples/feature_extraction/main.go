@@ -12,12 +12,22 @@ import (
 func main() {
 	ic := huggingface.NewInferenceClient(os.Getenv("HUGGINGFACEHUB_API_TOKEN"))
 
-	res, err := ic.FeatureExtraction(context.Background(), &huggingface.FeatureExtractionRequest{
+	res1, err1 := ic.FeatureExtraction(context.Background(), &huggingface.FeatureExtractionRequest{
 		Inputs: []string{"Hello World"},
 	})
-	if err != nil {
-		log.Fatal(err)
+	if err1 != nil {
+		log.Fatal(err1)
 	}
 
-	fmt.Println(res[0][0])
+	fmt.Println(res1[0])
+
+	res2, err2 := ic.FeatureExtractionWithAutomaticReduction(context.Background(), &huggingface.FeatureExtractionRequest{
+		Inputs: []string{"Hello World"},
+		Model:  "sentence-transformers/all-mpnet-base-v2",
+	})
+	if err2 != nil {
+		log.Fatal(err2)
+	}
+
+	fmt.Println(res2[0])
 }
