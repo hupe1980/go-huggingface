@@ -203,3 +203,7 @@ func contains[T comparable](collection []T, element T) bool {
 
 	return false
 }
+
+func PTR[T any](input T) *T {
+	return &input
+}
