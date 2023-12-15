@@ -15,10 +15,10 @@ type FeatureExtractionRequest struct {
 }
 
 // Response structure for the feature extraction endpoint
-type FeatureExtractionResponse [][][][]float64
+type FeatureExtractionResponse [][][][]float32
 
 // Response structure for the feature extraction endpoint
-type FeatureExtractionWithAutomaticReductionResponse [][]float64
+type FeatureExtractionWithAutomaticReductionResponse [][]float32
 
 // FeatureExtraction performs feature extraction using the specified model.
 // It sends a POST request to the Hugging Face inference endpoint with the provided input data.
