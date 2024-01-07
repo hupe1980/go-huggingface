@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	huggingface "github.com/hupe1980/go-huggingface"
+	"github.com/hupe1980/go-huggingface"
 )
 
 func main() {

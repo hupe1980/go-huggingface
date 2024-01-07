@@ -1,4 +1,4 @@
-package gohuggingface
+package huggingface
 
 import (
 	"context"

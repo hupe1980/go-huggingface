@@ -1,4 +1,4 @@
-package gohuggingface
+package huggingface
 
 type Options struct {
 	// (Default: true). There is a cache layer on the inference API to speedup
